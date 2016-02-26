@@ -184,14 +184,14 @@ public class ExpressionEngine {
      *
      * @param inputString  the input string
      * @param startIndex  the index of the first char to process
-     * @param cellToken  a cellToken (essentially a return value)
      * @return  index corresponding to the position in the string just after the cell reference
      */
-    private static int getCellToken (String inputString, int startIndex, CellToken cellToken) {
+    public static CellToken getCellToken (String inputString, int startIndex) {
         char ch;
         int column = 0;
         int row = 0;
         int index = startIndex;
+        CellToken cellToken = new CellToken();
 
         // handle a bad startIndex
         if ((startIndex < 0) || (startIndex >= inputString.length() )) {
@@ -270,10 +270,12 @@ public class ExpressionEngine {
         // successfully parsed a cell reference
         cellToken.setColumn(column);
         cellToken.setRow(row);
-        return index;
+        return cellToken;
     }
 
-
+    public static void printCellId (CellToken ct) {
+        System.out.println(ct.getRow() + ":" + ct.getColumn());
+    }
     
 
 }

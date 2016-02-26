@@ -15,4 +15,8 @@ public class Spreadsheet {
         //TODO encapsulation and bound checking
         mySpreadSheet[row][column] = cell;
     }
+
+    public void printValues () {
+
+    }
 }

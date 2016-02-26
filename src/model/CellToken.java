@@ -1,5 +1,7 @@
 package model;
 
+import lexer.expression.ExpressionEngine;
+
 /**
  * Created by kyle on 2/23/16.
  */

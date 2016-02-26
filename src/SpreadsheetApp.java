@@ -5,6 +5,7 @@
  * @author Donald Chinn
  */
 
+import lexer.expression.ExpressionEngine;
 import model.CellToken;
 import model.Spreadsheet;
 
@@ -43,12 +44,14 @@ public class SpreadsheetApp {
     }
     
     private static void menuPrintCellFormula(Spreadsheet theSpreadsheet) {
-        CellToken cellToken = new CellToken();
         String inputString;
     
         System.out.println("Enter the cell: ");
         inputString = readString();
-        getCellToken(inputString, 0, cellToken);
+
+        //Turn this into a cell address i guess
+
+        CellToken cellToken = ExpressionEngine.getCellToken(inputString, 0);
     
         System.out.println(printCellToken(cellID));
         System.out.println(": ");
