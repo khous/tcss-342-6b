@@ -16,7 +16,15 @@ public class Spreadsheet {
         mySpreadSheet[row][column] = cell;
     }
 
+    public int getNumberOfRows () { return mySpreadSheet.length; }
+    public int getNumberOfColumns () { return mySpreadSheet[0].length; }
+
     public void printValues () {
 
+    }
+
+    public String getCellFormula (CellToken ct) {
+        //TODO bound checking
+        return
     }
 }

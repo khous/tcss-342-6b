@@ -53,13 +53,13 @@ public class SpreadsheetApp {
 
         CellToken cellToken = ExpressionEngine.getCellToken(inputString, 0);
     
-        System.out.println(printCellToken(cellID));
+        System.out.println(ExpressionEngine.printCellToken(cellToken));
         System.out.println(": ");
     
         if ((cellToken.getRow() < 0) ||
-            (cellToken.getRow() >= theSpreadsheet.getNumRows()) ||
+            (cellToken.getRow() >= theSpreadsheet.getNumberOfRows()) ||
             (cellToken.getColumn() < 0) ||
-            (cellToken.getColumn() >= theSpreadsheet.getNumColumns())) {
+            (cellToken.getColumn() >= theSpreadsheet.getNumberOfColumns())) {
             
             System.out.println("Bad cell.");
             return;

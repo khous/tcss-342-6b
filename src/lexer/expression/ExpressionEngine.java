@@ -134,8 +134,7 @@ public class ExpressionEngine {
 
             } else if (Character.isUpperCase(ch)) {
                 // We found a cell reference token
-                CellToken cellToken = new CellToken();
-                index = getCellToken(formula, index, cellToken);
+                CellToken cellToken = getCellToken(formula, index);
                 if (cellToken.getRow() == -CellToken.BAD_CELL) {
                     error = true;
                     break;
@@ -197,7 +196,7 @@ public class ExpressionEngine {
         if ((startIndex < 0) || (startIndex >= inputString.length() )) {
             cellToken.setColumn(CellToken.BAD_CELL);
             cellToken.setRow(CellToken.BAD_CELL);
-            return index;
+            return cellToken;
         }
 
         // get rid of leading whitespace characters
@@ -212,7 +211,7 @@ public class ExpressionEngine {
             // reached the end of the string before finding a capital letter
             cellToken.setColumn(CellToken.BAD_CELL);
             cellToken.setRow(CellToken.BAD_CELL);
-            return index;
+            return cellToken;
         }
 
         // ASSERT: index now points to the first non-whitespace character
@@ -222,7 +221,7 @@ public class ExpressionEngine {
         if (!Character.isUpperCase(ch)) {
             cellToken.setColumn(CellToken.BAD_CELL);
             cellToken.setRow(CellToken.BAD_CELL);
-            return index;
+            return cellToken;
         } else {
             column = ch - 'A';
             index++;
@@ -241,7 +240,7 @@ public class ExpressionEngine {
             // reached the end of the string before fully parsing the cell reference
             cellToken.setColumn(CellToken.BAD_CELL);
             cellToken.setRow(CellToken.BAD_CELL);
-            return index;
+            return cellToken;
         }
 
         // ASSERT: We have processed leading whitespace and the
@@ -254,7 +253,7 @@ public class ExpressionEngine {
         } else {
             cellToken.setColumn(CellToken.BAD_CELL);
             cellToken.setRow(CellToken.BAD_CELL);
-            return index;
+            return cellToken;
         }
 
         while (index < inputString.length() ) {
@@ -273,8 +272,8 @@ public class ExpressionEngine {
         return cellToken;
     }
 
-    public static void printCellId (CellToken ct) {
-        System.out.println(ct.getRow() + ":" + ct.getColumn());
+    public static String printCellToken (CellToken ct) {
+        return ct.getRow() + ":" + ct.getColumn();
     }
     
 
