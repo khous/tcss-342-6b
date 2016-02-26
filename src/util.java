@@ -2,15 +2,18 @@
  * Utility functions.
  * You should place these methods in the appropriate classes.
  * @author Donald Chinn
- */
+ *//*
+
 import model.*;
 
 public class util {
-    /**
+    */
+/**
      * Return a string associated with a token
      * @param expTreeToken  an ExpressionTreeToken
      * @return a String associated with expTreeToken
-     */
+     *//*
+
     String printExpressionTreeToken (Token expTreeToken) {
         String returnString = "";
     
@@ -31,7 +34,8 @@ public class util {
     
 
     
-    /*
+    */
+/*
      * Return the priority of this OperatorToken.
      *
      * priorities:
@@ -40,7 +44,8 @@ public class util {
      *   (    : 2
      *
      * @return  the priority of operatorToken
-     */
+     *//*
+
     int priority () {
         switch (this.operatorToken) {
             case Plus:
@@ -65,12 +70,14 @@ public class util {
     
 
     
-    /**
+    */
+/**
      *  Given a CellToken, print it out as it appears on the
      *  spreadsheet (e.g., "A3")
      *  @param cellToken  a CellToken
      *  @return  the cellToken's coordinates
-     */
+     *//*
+
     String printCellToken (CellToken cellToken) {
         char ch;
         String returnString = "";
@@ -108,4 +115,4 @@ public class util {
         return returnString;
     }
 
-}
+}*/

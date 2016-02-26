@@ -72,7 +72,7 @@ public class SpreadsheetApp {
     }
     
     
-    private static void menuChangeCellFormula(Spreadsheet theSpreadsheet) {
+    /*private static void menuChangeCellFormula(Spreadsheet theSpreadsheet) {
         String inputCell;
         String inputFormula;
         CellToken cellToken;
@@ -98,7 +98,7 @@ public class SpreadsheetApp {
         inputFormula = readString();
         expTreeTokenStack = getFormula (inputFormula);
     
-        /*
+        *//*
         // This code prints out the expression stack from
         // top to bottom (that is, reverse of postfix).
         while (!expTreeTokenStack.isEmpty())
@@ -106,14 +106,14 @@ public class SpreadsheetApp {
             expTreeToken = expTreeTokenStack.topAndPop();
             printExpressionTreeToken(expTreeToken);
         }
-        */
+        *//*
     
         theSpreadsheet.changeCellFormulaAndRecalculate(cellToken, expTreeTokenStack);
         System.out.println();
-    }
+    }*/
     
     public static void main(String[] args) {
-        Spreadsheet theSpreadsheet = new Spreadsheet(8);
+        Spreadsheet theSpreadsheet = new Spreadsheet();
 
         boolean done = false;
         String command = "";
@@ -155,7 +155,7 @@ public class SpreadsheetApp {
                     break;
         
                 case 'c':
-                    menuChangeCellFormula(theSpreadsheet);
+//                    menuChangeCellFormula(theSpreadsheet);
                     break;
         
                     /* BONUS:
