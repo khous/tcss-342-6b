@@ -115,7 +115,7 @@ public class SpreadsheetApp {
     public static void main(String[] args) {
         Spreadsheet theSpreadsheet = new Spreadsheet(8);
 
-        bool done = false;
+        boolean done = false;
         String command = "";
     
         System.out.println(">>> Welcome to the TCSS 342 Spreadsheet <<<");
