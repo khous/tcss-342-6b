@@ -47,8 +47,17 @@ public class Spreadsheet {
                     sb.append(c.getFormula()).append(", ");
                 }
             }
+            System.out.println();
         }
 
         return sb.toString();
+    }
+
+    public void changeCellFormulaAndRecalculate(CellToken ct, String formula) {
+        Cell c = mySpreadSheet[ct.getRow()][ct.getColumn()];
+
+        if (c == null) return;
+
+        c.setFormula(formula);
     }
 }

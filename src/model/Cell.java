@@ -1,6 +1,9 @@
 package model;
 
+import lexer.expression.ExpressionEngine;
+
 import java.util.List;
+import java.util.Stack;
 
 public class Cell {
 
@@ -30,7 +33,7 @@ public class Cell {
      * @param formula The formula
      */
     public Cell (String formula) {
-        this.formula = formula;
+        setFormula(formula);
     }
 
     public void calculate () {
@@ -49,8 +52,11 @@ public class Cell {
         return value;
     }
 
+    //TODO rebuild expression tree
     public void setFormula(String formula) {
         this.formula = formula;
+
+        Stack postFix = ExpressionEngine.getFormula(formula);
     }
 
     public void setParents(List<Cell> parents) {

@@ -6,6 +6,7 @@
  */
 
 import lexer.expression.ExpressionEngine;
+import model.Cell;
 import model.CellToken;
 import model.Spreadsheet;
 
@@ -98,7 +99,7 @@ public class SpreadsheetApp {
         inputFormula = readString();
         expTreeTokenStack = getFormula (inputFormula);
     
-        *//*
+
         // This code prints out the expression stack from
         // top to bottom (that is, reverse of postfix).
         while (!expTreeTokenStack.isEmpty())
@@ -106,8 +107,7 @@ public class SpreadsheetApp {
             expTreeToken = expTreeTokenStack.topAndPop();
             printExpressionTreeToken(expTreeToken);
         }
-        *//*
-    
+
         theSpreadsheet.changeCellFormulaAndRecalculate(cellToken, expTreeTokenStack);
         System.out.println();
     }*/
@@ -121,7 +121,7 @@ public class SpreadsheetApp {
         System.out.println(">>> Welcome to the TCSS 342 Spreadsheet <<<");
         System.out.println();
         System.out.println();
-    
+
         while (!done) {
             System.out.println("Choose from the following commands:");
             System.out.println();
@@ -155,6 +155,7 @@ public class SpreadsheetApp {
                     break;
         
                 case 'c':
+                    theSpreadsheet.setCell(0,0,new Cell("1 + 1"));
 //                    menuChangeCellFormula(theSpreadsheet);
                     break;
         

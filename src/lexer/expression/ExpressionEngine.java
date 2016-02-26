@@ -38,7 +38,7 @@ public class ExpressionEngine {
      *
      * This algorithm follows the algorithm described in Weiss, pages 105-108.
      */
-    private static Stack getFormula(String formula) {
+    public static Stack getFormula(String formula) {
         Stack returnStack = new Stack();  // stack of Tokens (representing a postfix expression)
         boolean error = false;
         char ch = ' ';
