@@ -37,10 +37,6 @@ public class Cell {
         //TODO some crazy shit
     }
 
-
-
-
-
     public String getFormula() {
         return formula;
     }
