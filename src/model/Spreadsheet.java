@@ -8,7 +8,7 @@ public class Spreadsheet {
     public Cell getCell (int row, int column) {
         //TODO bound checking
 
-        return ((Cell) mySpreadSheet[row][column]).clone();
+        return mySpreadSheet[row][column].clone();
     }
 
     public void setCell (int row, int column, Cell cell) {
@@ -25,6 +25,7 @@ public class Spreadsheet {
 
     public String getCellFormula (CellToken ct) {
         //TODO bound checking
-        return
+        Cell c = mySpreadSheet[ct.getRow()][ct.getColumn()];
+        return c.getFormula();
     }
 }

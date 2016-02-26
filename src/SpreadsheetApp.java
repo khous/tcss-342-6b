@@ -49,8 +49,6 @@ public class SpreadsheetApp {
         System.out.println("Enter the cell: ");
         inputString = readString();
 
-        //Turn this into a cell address i guess
-
         CellToken cellToken = ExpressionEngine.getCellToken(inputString, 0);
     
         System.out.println(ExpressionEngine.printCellToken(cellToken));
@@ -65,8 +63,7 @@ public class SpreadsheetApp {
             return;
         }
     
-        theSpreadsheet.printCellFormula(cellToken);
-        System.out.println();
+        System.out.println(theSpreadsheet.getCellFormula(cellToken));
     }
     
     private static void menuPrintAllFormulas(Spreadsheet theSpreadsheet) {
