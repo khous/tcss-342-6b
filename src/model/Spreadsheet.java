@@ -59,5 +59,7 @@ public class Spreadsheet {
         if (c == null) return;
 
         c.setFormula(formula);
+
+        //discover graph
     }
 }
