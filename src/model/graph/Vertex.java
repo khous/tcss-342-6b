@@ -8,19 +8,19 @@ import model.Cell;
 public class Vertex {
     private Cell cell;
 
-    public int getIndirection() {
-        return indirection;
+    public int getIndegree() {
+        return indegree;
     }
 
-    public void setIndirection(int indirection) {
-        this.indirection = indirection;
+    public void setIndegree(int indegree) {
+        this.indegree = indegree;
     }
 
-    private int indirection;
+    private int indegree;
 
-    public Vertex (Cell cell, int indirection) {
+    public Vertex (Cell cell, int indegree) {
         this.cell = cell;
-        this.indirection = indirection;
+        this.indegree = indegree;
     }
 
     public boolean equals (Object o) {

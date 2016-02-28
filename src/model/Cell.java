@@ -108,7 +108,7 @@ public class Cell {
         return cellId.toString();
     }
 
-    public int getIndirection () {
+    public int getIndegree() {
         return parents.size();
     }
 

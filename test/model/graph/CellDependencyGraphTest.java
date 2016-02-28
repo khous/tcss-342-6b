@@ -4,10 +4,10 @@ import model.Cell;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import java.util.Stack;
 
 /**
  * Created by kyle on 2/27/16.
@@ -50,40 +50,41 @@ public class CellDependencyGraphTest {
 
         Assert.assertEquals(adjacencyList.size(), 7);
 
-        List<Vertex> aV = adjacencyList.get("A1");
-        Assert.assertNotNull(aV);
+        goesTo(adjacencyList, "A1", b, e);
+        goesTo(adjacencyList, "A2", c, f);
+        goesTo(adjacencyList, "A3", d);
 
-        List<Vertex> bV = adjacencyList.get("A2");
-        Assert.assertNotNull(bV);
-        Assert.assertTrue(bV.contains(cellToVertex(g)) && bV.contains(cellToVertex(a)));
+//        Assert.assertTrue(goesTo(adjacencyList, "A4", d));
 
-        List<Vertex> cV = adjacencyList.get("A3");
-        Assert.assertNotNull(cV);
-        Assert.assertTrue(cV.contains(cellToVertex(f)) && cV.contains(cellToVertex(b)));
+        goesTo(adjacencyList, "A5", g);
+        goesTo(adjacencyList, "A6", c);
+        goesTo(adjacencyList, "A7", b);
 
-        List<Vertex> dV = adjacencyList.get("A4");
-        Assert.assertNotNull(dV);
-        Assert.assertTrue(dV.contains(cellToVertex(c)));
+        testGetTopologicalOrder(graph);
+    }
 
-        List<Vertex> eV = adjacencyList.get("A5");
-        Assert.assertNotNull(eV);
-        Assert.assertTrue(eV.contains(cellToVertex(a)));
+    private void goesTo (HashMap<String, List<Vertex>> adjacencyList, String root, Cell... cells) {
+        List<Vertex> v = adjacencyList.get(root);
+        Assert.assertNotNull(v);
 
-        List<Vertex> fV = adjacencyList.get("A6");
-        Assert.assertNotNull(fV);
-        Assert.assertTrue(fV.contains(cellToVertex(b)));
-
-        List<Vertex> gV = adjacencyList.get("A7");
-        Assert.assertNotNull(gV);
-        Assert.assertTrue(gV.contains(cellToVertex(e)));
+        for (Cell c : cells) {
+            Assert.assertTrue(v.contains(cellToVertex(c)));
+        }
     }
 
     private Vertex cellToVertex (Cell c) {
-        return new Vertex(c, c.getIndirection());
+        return new Vertex(c, c.getIndegree());
     }
 
-    @Test
-    public void testGetTopologicalOrder () throws Exception {
+    public void testGetTopologicalOrder (CellDependencyGraph graph) throws Exception {
+        ArrayDeque<Cell> topologicalOrder = graph.getTopologicalOrder();
 
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A1");
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A5");
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A7");
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A2");
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A6");
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A3");
+        Assert.assertEquals(topologicalOrder.remove().getCellId(), "A4");
     }
 }

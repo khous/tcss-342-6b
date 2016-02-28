@@ -22,35 +22,54 @@ public class CellDependencyGraph {
     }
 
     public void buildGraph (Cell root) {
-        String cellId = root.getCellId();
+        List<Cell> parents = root.getParents();
+        Vertex rootVertex = new Vertex(root, parents.size());
 
-        if (adjacencyList.containsKey(cellId)) return;//This node was already processed
+        String rootId = root.getCellId();
 
-        List<Vertex> adjacencies = new ArrayList<>();
+        List<Vertex> existingEntry = adjacencyList.get(rootId);
 
-        for (Cell parent : root.getParents())
-            adjacencies.add(new Vertex(parent, parent.getIndirection()));
+        if (existingEntry == null) {
+            adjacencyList.put(rootId, new ArrayList<Vertex>());
+        }
 
-        if (adjacencies.size() == 0)
+        for (Cell parent : parents) {
+            String cellId = parent.getCellId();
+            List<Vertex> adjacencies = adjacencyList.get(cellId);
+
+            if (adjacencies == null)
+                adjacencies = new ArrayList<>();
+
+            if (adjacencies.contains(rootVertex))
+                return;//cycle detected?
+
+            adjacencies.add(rootVertex);
+
+            adjacencyList.put(cellId, adjacencies);
+
+//            adjacencies.add(new Vertex(parent, parent.getIndegree()));
+
+        }
+
+        if (parents.isEmpty() && !rootNodes.contains(root)) {
             rootNodes.push(root);
+        }
 
-        adjacencyList.put(root.getCellId(), adjacencies);
-
-        for (Vertex parent : adjacencies) {
-            buildGraph(parent.getCell());
+        for (Cell parent : parents) {
+            buildGraph(parent);
         }
     }
 
-    public Stack<Cell> getTopologicalOrder () {
+    public ArrayDeque<Cell> getTopologicalOrder () {
         //There's a cycle, who knows where
         if (rootNodes.size() == 0) return null;
 
         Stack<Vertex> roots = new Stack<>();
 
         for (Cell c : rootNodes)
-            roots.push(new Vertex(c, c.getIndirection()));
+            roots.push(new Vertex(c, c.getIndegree()));
 
-        Stack<Cell> output = new Stack<>();
+        ArrayDeque<Cell> output = new ArrayDeque<>();
 
         //get the start node, add it to the output
         //decrement all its children
@@ -59,13 +78,13 @@ public class CellDependencyGraph {
 
         while (!roots.isEmpty()) {
             Vertex node = roots.pop();
-            output.push(node.getCell());
+            output.offer(node.getCell());
 
             //decrement indirection for vertices
             for (Vertex vertex : adjacencyList.get(node.getCell().getCellId())) {
-                int indirection = Math.max(0, vertex.getIndirection());
-                vertex.setIndirection(indirection);
-                if (indirection == 0)
+                int indegree = Math.max(0, vertex.getIndegree() - 1);
+                vertex.setIndegree(indegree);
+                if (indegree == 0)
                     roots.push(vertex);
             }
         }
