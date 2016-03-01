@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
 public class SpreadsheetApp {
     
     /**
-     * Readd a string from standard input.
+     * Read a string from standard input.
      * All characters up to the first carriage return are read.
      * The return string does not include the carriage return.
      * @return  a line of input from standard input
