@@ -1,6 +1,10 @@
 package model;
 
 
+import model.graph.CellDependencyGraph;
+
+import java.util.ArrayDeque;
+
 public class Spreadsheet {
     public static final int DEFAULT_DIMENSION = 3;
     private Cell[][] mySpreadSheet;
@@ -58,6 +62,16 @@ public class Spreadsheet {
 
         if (c == null) return;
 
-        c.setFormula(formula);
+        c.setFormula(formula);//this needs to rediscover its parents
+
+        //discover graph
+        CellDependencyGraph graph = new CellDependencyGraph();
+
+        graph.buildGraph(c);
+        ArrayDeque<Cell> sortedCells = graph.getTopologicalOrder();
+
+        while (!sortedCells.isEmpty()) {
+            sortedCells.remove().calculate();
+        }
     }
 }

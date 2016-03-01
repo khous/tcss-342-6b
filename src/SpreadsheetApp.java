@@ -155,7 +155,7 @@ public class SpreadsheetApp {
                     break;
         
                 case 'c':
-                    theSpreadsheet.setCell(0,0,new Cell("1 + 1"));
+                    theSpreadsheet.setCell(0,0,new Cell("1 + 1", 0, 0));
 //                    menuChangeCellFormula(theSpreadsheet);
                     break;
         
