@@ -7,13 +7,42 @@ import org.junit.Test;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Created by kyle on 2/27/16.
  */
 public class CellDependencyGraphTest {
 
+
+    @Test
+    public void testCyclicBuildGraph () throws Exception {
+        String formula = "";
+
+        Cell a = new Cell(formula, 1, 1);
+        Cell b = new Cell(formula, 2, 1);
+
+        a.addParent(b);
+        b.addParent(a);
+
+        CellDependencyGraph graph = new CellDependencyGraph();
+        graph.buildGraph(a);
+
+        ArrayDeque<Cell> topoOrder = graph.getTopologicalOrder();
+
+        Assert.assertTrue(topoOrder.isEmpty());
+    }
+
+    @Test
+    public void testBuildGraphWithOneNode () throws Exception {
+        String formula = "";
+
+        Cell a = new Cell(formula, 1, 1);
+
+        CellDependencyGraph graph = new CellDependencyGraph();
+
+        graph.buildGraph(a);
+        Assert.assertTrue(!graph.getTopologicalOrder().isEmpty());
+    }
 
     @Test
     public void testBuildGraph () throws Exception {

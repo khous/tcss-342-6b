@@ -60,6 +60,10 @@ public class CellDependencyGraph {
         }
     }
 
+    /**
+     * Calling remove on the output of this will return the next topological element in the graph
+     * @return
+     */
     public ArrayDeque<Cell> getTopologicalOrder () {
         //There's a cycle, who knows where
         if (rootNodes.size() == 0) return null;

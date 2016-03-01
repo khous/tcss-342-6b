@@ -57,7 +57,12 @@ public class Cell {
         this.row = row;
     }
 
+    /**
+     * This must be able to assign a value to itself when called, if it is unable, then something
+     * broke in the graph generation.
+     */
     public void calculate () {
+        //
         //TODO some crazy shit
     }
 
