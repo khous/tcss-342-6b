@@ -40,4 +40,5 @@ public class CellToken extends Token {
     public int getRow () {
         return row;
     }
+    
 }
