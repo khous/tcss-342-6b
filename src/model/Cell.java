@@ -1,6 +1,8 @@
 package model;
 
 import lexer.expression.ExpressionEngine;
+import lexer.expression.ExpressionNode;
+import lexer.expression.ExpressionTree;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ public class Cell {
      */
     private List<Cell> parents = new ArrayList<>();//[ A1 ]
 
+    private ExpressionTree tree;
+    private Stack postFix;
     //ExpressionTree
     /*
                  OpToken +
@@ -62,8 +66,7 @@ public class Cell {
      * broke in the graph generation.
      */
     public void calculate () {
-        //
-        //TODO some crazy shit
+    	tree.compute();
     }
 
     public String getFormula() {
@@ -81,8 +84,8 @@ public class Cell {
     //TODO rebuild expression tree
     public void setFormula(String formula) {
         this.formula = formula;
-
-        Stack postFix = ExpressionEngine.getFormula(formula);
+        postFix = ExpressionEngine.getFormula(formula);
+        BuildExpressionTree(postFix);
     }
 
     public List<Cell> getParents() {
@@ -130,5 +133,34 @@ public class Cell {
         }
 
         return false;
+    }
+    
+ // Build an expression tree from a stack of ExpressionTreeTokens
+    public void BuildExpressionTree (Stack s) {
+    	tree.setRoot(GetExpressionTree(s));
+    	if (!s.isEmpty()) {
+    	}
+    }
+    
+    public ExpressionNode GetExpressionTree(Stack s) {
+    	ExpressionNode returnTree;
+    	Token token;
+    	if (s.isEmpty())
+    		return null;
+    	token = (Token) s.pop(); // need to handle stack underflow
+    	if ((token instanceof LiteralToken) ||
+    			(token instanceof CellToken) ) {
+	    // Literals and Cells are leaves in the expression tree
+	    returnTree = new ExpressionNode(token, null, null);
+	    return returnTree;
+	    } else if (token instanceof OperatorToken) {
+	    // Continue finding tokens that will form the
+	    // right subtree and left subtree.
+	    ExpressionNode rightSubtree = GetExpressionTree (s);
+     	ExpressionNode leftSubtree = GetExpressionTree (s);
+     	returnTree = new ExpressionNode(token, leftSubtree, rightSubtree);
+     	return returnTree;
+     }
+		return null;
     }
 }

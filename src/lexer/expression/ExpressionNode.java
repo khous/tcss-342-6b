@@ -11,6 +11,16 @@ public class ExpressionNode {
 
     private Token value;
 
+    public ExpressionNode() {
+    	
+    }
+    
+	public ExpressionNode(Token token, ExpressionNode leftSubtree, ExpressionNode rightSubtree) {
+		value = token;
+		leftChild = leftSubtree;
+		rightChild = rightSubtree;
+	}
+
 	public Token getValue() {
 		return value;
 	}

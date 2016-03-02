@@ -15,12 +15,11 @@ public class ExpressionTree {
     private ExpressionNode root;
 
     private ExpressionTree( ExpressionNode node ) {
-        root = node;
+        setRoot(node);
     }
 
     public int compute () {
-    	
-        return postOrder(root);
+        return postOrder(getRoot());
     }
     
     public int postOrder(ExpressionNode node) {
@@ -31,13 +30,13 @@ public class ExpressionTree {
     	}
     	if(t instanceof OperatorToken) {
     		switch (((OperatorToken) t).getOperatorToken()) {
-    		case '+':
+    		case OperatorToken.PLUS:
     			return postOrder(node.getLeftChild()) + postOrder(node.getRightChild());
-    		case '-':
+    		case OperatorToken.MINUS:
     			return postOrder(node.getLeftChild()) - postOrder(node.getRightChild());
-    		case '*':
+    		case OperatorToken.MULTIPLY:
     			return postOrder(node.getLeftChild()) * postOrder(node.getRightChild());
-    		case '/':
+    		case OperatorToken.DIVIDE:
     			return postOrder(node.getLeftChild()) / postOrder(node.getRightChild());
     		}
     	} else if (t instanceof LiteralToken) {
@@ -55,7 +54,7 @@ public class ExpressionTree {
      */
     public void printExpression() {
         // Call a recursive helper method to perform the actual printing.
-        printExpression(root);
+        printExpression(getRoot());
         System.out.println();
     }
 
@@ -80,5 +79,13 @@ public class ExpressionTree {
             System.out.print(")");
         } 
     }
+
+	public ExpressionNode getRoot() {
+		return root;
+	}
+
+	public void setRoot(ExpressionNode root) {
+		this.root = root;
+	}
 
 }
