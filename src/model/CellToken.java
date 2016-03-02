@@ -11,7 +11,16 @@ public class CellToken extends Token {
 
     private int row;
     private int column;
-
+    private Spreadsheet sheet;
+    
+    public CellToken() {
+    	
+    }
+    
+    public CellToken (Spreadsheet s) {
+    	sheet = s;
+    }
+    
     public void setRow(int row) {
         this.row = row;
     }
@@ -27,4 +36,10 @@ public class CellToken extends Token {
     public int getRow () {
         return row;
     }
+    
+    public Cell getCell() {
+    	Cell a = sheet.getCell(row, column);
+		return a;
+    }
+    
 }
