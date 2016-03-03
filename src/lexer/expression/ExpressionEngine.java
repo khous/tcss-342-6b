@@ -15,10 +15,6 @@ import java.util.Stack;
  * cell has?
  */
 public class ExpressionEngine {
-    public static ExpressionTree formulaToExpressionTree (String formula) {
-        return null;
-    }
-
     /**
      * getFormula
      *
@@ -319,5 +315,9 @@ public class ExpressionEngine {
         }
 
         return out.trim();
+    }
+
+    public static int calculateFromFormula (String formula) throws OperationNotSupportedException {
+        return calculate(getFormula(formula));
     }
 }
