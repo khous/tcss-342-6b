@@ -282,18 +282,14 @@ public class ExpressionEngine {
 
             if (currentToken instanceof OperatorToken) {
                 ValueToken rightOperand = operands.removeLast();
-
-                if (rightOperand instanceof CellToken)
-                    ((CellToken) rightOperand).setSheet(sheet);
+                assignSheetToCellToken(rightOperand, sheet);
 
                 if (operands.isEmpty()) {
                     //do a unary operation
                     calculatedValue = ((OperatorToken) currentToken).compute(rightOperand.getValue());
                 } else {
                     ValueToken leftOperand = operands.removeLast();
-
-                    if (rightOperand instanceof CellToken)
-                        ((CellToken) leftOperand).setSheet(sheet);
+                    assignSheetToCellToken(leftOperand, sheet);
 
                     calculatedValue = ((OperatorToken) currentToken)
                             .compute(leftOperand.getValue(), rightOperand.getValue());
@@ -306,11 +302,14 @@ public class ExpressionEngine {
         }
 
         ValueToken finalValue = operands.pop();
-
-        if (finalValue instanceof CellToken)
-            ((CellToken) finalValue).setSheet(sheet);
+        assignSheetToCellToken(finalValue, sheet);
 
         return finalValue.getValue();
+    }
+
+    public static void assignSheetToCellToken (ValueToken t, Spreadsheet sheet) {
+        if (t instanceof CellToken)
+            ((CellToken) t).setSheet(sheet);
     }
 
     public static String postfixToString (ArrayDeque<Token> expression) {
