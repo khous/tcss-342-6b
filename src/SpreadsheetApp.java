@@ -13,6 +13,7 @@ import model.Spreadsheet;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Stack;
 
 public class SpreadsheetApp {
     
@@ -41,7 +42,7 @@ public class SpreadsheetApp {
     }
     
     private static void menuPrintValues(Spreadsheet theSpreadsheet) {
-        theSpreadsheet.printValues();
+        System.out.println(theSpreadsheet.printValues());
     }
     
     private static void menuPrintCellFormula(Spreadsheet theSpreadsheet) {
@@ -73,7 +74,7 @@ public class SpreadsheetApp {
     }
     
     
-    /*private static void menuChangeCellFormula(Spreadsheet theSpreadsheet) {
+    private static void menuChangeCellFormula(Spreadsheet theSpreadsheet) {
         String inputCell;
         String inputFormula;
         CellToken cellToken;
@@ -81,15 +82,14 @@ public class SpreadsheetApp {
         // ExpressionTreeToken expTreeToken;
     
         System.out.println("Enter the cell to change: ");
-        inputCell = readString();
-        theSpreadsheet.getCellToken (inputCell, 0, cellToken);
-    
+        cellToken = ExpressionEngine.getCellToken(readString(), 0);
+
         // error check to make sure the row and column
         // are within spreadsheet array bounds.
         if ((cellToken.getRow() < 0) ||
-            (cellToken.getRow() >= theSpreadsheet.getNumRows()) ||
+            (cellToken.getRow() >= theSpreadsheet.getNumberOfRows()) ||
             (cellToken.getColumn() < 0) ||
-            (cellToken.getColumn() >= theSpreadsheet.getNumColumns()) ) {
+            (cellToken.getColumn() >= theSpreadsheet.getNumberOfColumns()) ) {
             
             System.out.println("Bad cell.");
             return;
@@ -97,20 +97,11 @@ public class SpreadsheetApp {
     
         System.out.println("Enter the cell's new formula: ");
         inputFormula = readString();
-        expTreeTokenStack = getFormula (inputFormula);
-    
 
-        // This code prints out the expression stack from
-        // top to bottom (that is, reverse of postfix).
-        while (!expTreeTokenStack.isEmpty())
-        {
-            expTreeToken = expTreeTokenStack.topAndPop();
-            printExpressionTreeToken(expTreeToken);
-        }
-
-        theSpreadsheet.changeCellFormulaAndRecalculate(cellToken, expTreeTokenStack);
+        theSpreadsheet.setCell(cellToken.getRow(), cellToken.getColumn(), new Cell(inputFormula, cellToken.getRow(), cellToken.getColumn()));
+        theSpreadsheet.changeCellFormulaAndRecalculate(cellToken, inputFormula);
         System.out.println();
-    }*/
+    }
     
     public static void main(String[] args) {
         Spreadsheet theSpreadsheet = new Spreadsheet();
@@ -155,8 +146,7 @@ public class SpreadsheetApp {
                     break;
         
                 case 'c':
-                    theSpreadsheet.setCell(0,0,new Cell("1 + 1", 0, 0));
-//                    menuChangeCellFormula(theSpreadsheet);
+                    menuChangeCellFormula(theSpreadsheet);
                     break;
         
                     /* BONUS:

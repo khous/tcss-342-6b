@@ -2,10 +2,10 @@ package model;
 
 import lexer.expression.ExpressionEngine;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class Cell {
 
@@ -18,6 +18,8 @@ public class Cell {
      * The list of cells that this cell dependends on
      */
     private List<Cell> parents = new ArrayList<>();//[ A1 ]
+
+    private ArrayDeque<Token> postFixExpression;
 
     //ExpressionTree
     /*
@@ -37,7 +39,8 @@ public class Cell {
      * @param formula The formula
      */
     public Cell (String formula, int row, int column) {
-        setFormula(formula);
+        this.formula = formula;
+
         setRow(row);
         setColumn(column);
     }
@@ -62,9 +65,10 @@ public class Cell {
      * This must be able to assign a value to itself when called, if it is unable, then something
      * broke in the graph generation.
      */
-    public void calculate () {
+    public void calculate (Spreadsheet sheet) throws OperationNotSupportedException {
         //
         //TODO some crazy shit
+        this.value = ExpressionEngine.calculate(postFixExpression.clone(), sheet);
     }
 
     public String getFormula() {
@@ -80,10 +84,22 @@ public class Cell {
     }
 
     //TODO rebuild expression tree
-    public void setFormula(String formula) {
+    public void setFormula(String formula, Spreadsheet sheet) {
         this.formula = formula;
 
-        ArrayDeque<Token> postFix = ExpressionEngine.getFormula(formula);
+        postFixExpression = ExpressionEngine.getFormula(formula);
+
+        parents.clear();
+
+        for (Token t : postFixExpression) {
+            if (t instanceof CellToken) {
+                //add dependency to parents
+                Cell c = sheet.getCell((CellToken) t);
+
+                if (!parents.contains(c))
+                    parents.add(c);
+            }
+        }
     }
 
     public List<Cell> getParents() {
@@ -94,8 +110,6 @@ public class Cell {
         this.parents = parents;
     }
 
-
-
     public String getCellId () {
         if (row < 0 || column < 0) return "";
 
@@ -103,10 +117,11 @@ public class Cell {
         StringBuilder cellId = new StringBuilder();
 
         //Convert the column to base26
-        while (n > 0) {
+        do {
             cellId.append((char)((n % 26) + 64));
             n /= 26;
-        }
+        } while (n > 0);
+        
         cellId = cellId.reverse();
 
         cellId.append(row);

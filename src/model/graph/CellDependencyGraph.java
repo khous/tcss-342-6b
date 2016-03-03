@@ -66,7 +66,7 @@ public class CellDependencyGraph {
      */
     public ArrayDeque<Cell> getTopologicalOrder () {
         //There's a cycle, who knows where
-        if (rootNodes.size() == 0) return null;
+        if (rootNodes.size() == 0) return new ArrayDeque<>();
 
         Stack<Vertex> roots = new Stack<>();
 

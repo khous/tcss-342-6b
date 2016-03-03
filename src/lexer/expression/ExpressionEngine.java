@@ -130,12 +130,13 @@ public class ExpressionEngine {
             } else if (Character.isUpperCase(ch)) {
                 // We found a cell reference token
                 CellToken cellToken = getCellToken(formula, index);
-                if (cellToken.getRow() == -CellToken.BAD_CELL) {
+                if (cellToken.getRow() == CellToken.BAD_CELL) {
                     error = true;
                     break;
                 } else {
                     // place the cell reference on the output stack
                     returnStack.push(cellToken);
+                    index += cellToken.toString().length();
                 }
 
             } else {
@@ -271,7 +272,8 @@ public class ExpressionEngine {
         return ct.getRow() + ":" + ct.getColumn();
     }
     
-    public static int calculate (ArrayDeque<Token> postfixExpression) throws OperationNotSupportedException {
+    public static int calculate (ArrayDeque<Token> postfixExpression, Spreadsheet sheet)
+            throws OperationNotSupportedException {
         ArrayDeque<ValueToken> operands = new ArrayDeque<>();
         int calculatedValue;
 
@@ -281,11 +283,18 @@ public class ExpressionEngine {
             if (currentToken instanceof OperatorToken) {
                 ValueToken rightOperand = operands.removeLast();
 
+                if (rightOperand instanceof CellToken)
+                    ((CellToken) rightOperand).setSheet(sheet);
+
                 if (operands.isEmpty()) {
                     //do a unary operation
                     calculatedValue = ((OperatorToken) currentToken).compute(rightOperand.getValue());
                 } else {
                     ValueToken leftOperand = operands.removeLast();
+
+                    if (rightOperand instanceof CellToken)
+                        ((CellToken) leftOperand).setSheet(sheet);
+
                     calculatedValue = ((OperatorToken) currentToken)
                             .compute(leftOperand.getValue(), rightOperand.getValue());
                 }
@@ -296,7 +305,12 @@ public class ExpressionEngine {
             }
         }
 
-        return operands.pop().getValue();
+        ValueToken finalValue = operands.pop();
+
+        if (finalValue instanceof CellToken)
+            ((CellToken) finalValue).setSheet(sheet);
+
+        return finalValue.getValue();
     }
 
     public static String postfixToString (ArrayDeque<Token> expression) {
@@ -317,7 +331,7 @@ public class ExpressionEngine {
         return out.trim();
     }
 
-    public static int calculateFromFormula (String formula) throws OperationNotSupportedException {
-        return calculate(getFormula(formula));
+    public static int calculateFromFormula (String formula, Spreadsheet sheet) throws OperationNotSupportedException {
+        return calculate(getFormula(formula), sheet);
     }
 }

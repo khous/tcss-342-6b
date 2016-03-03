@@ -11,16 +11,28 @@ public class CellToken extends ValueToken {
 
     private int row;
     private int column;
-    private Spreadsheet sheet;
-    
-    public CellToken() {
-    	
+
+    public CellToken () {}
+
+    public CellToken (int row, int column) {
+        this.row = row;
+        this.column = column;
     }
+
+    public Spreadsheet getSheet() {
+        return sheet;
+    }
+
+    public void setSheet(Spreadsheet sheet) {
+        this.sheet = sheet;
+    }
+
+    private Spreadsheet sheet;
     
     public CellToken (Spreadsheet s) {
     	sheet = s;
     }
-    
+
     public Cell getCell () {
 		return sheet.getCell(row, column);
     }
@@ -45,4 +57,7 @@ public class CellToken extends ValueToken {
         return getCell().getValue();
     }
 
+    public String toString () {
+        return (new Cell("", row, column)).getCellId();
+    }
 }

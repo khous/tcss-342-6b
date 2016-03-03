@@ -14,11 +14,11 @@ public class CellTest {
     public void testGetCellId() throws Exception {
         Cell c = new Cell("", 1, 1);
 
-        Assert.assertEquals(c.getCellId(), "A1");
+        Assert.assertEquals("A1", c.getCellId());
 
         c.setRow(1);
         c.setColumn(2);
-        Assert.assertEquals(c.getCellId(), "B1");
+        Assert.assertEquals("B1", c.getCellId());
 
         c.setRow(1);
         c.setColumn(27);
