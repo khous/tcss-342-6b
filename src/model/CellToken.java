@@ -5,7 +5,7 @@ import lexer.expression.ExpressionEngine;
 /**
  * Created by kyle on 2/23/16.
  */
-public class CellToken extends Token {
+public class CellToken extends ValueToken {
 
     public static final int BAD_CELL = -1;
 
@@ -13,18 +13,18 @@ public class CellToken extends Token {
     private int column;
     private Spreadsheet sheet;
     
-    public CellToken(){
+    public CellToken() {
     	
     }
     
-    public CellToken(Spreadsheet s) {
+    public CellToken (Spreadsheet s) {
     	sheet = s;
     }
     
-    public Cell getCell() {
+    public Cell getCell () {
 		return sheet.getCell(row, column);
     }
-    
+
     public void setRow(int row) {
         this.row = row;
     }
@@ -40,5 +40,9 @@ public class CellToken extends Token {
     public int getRow () {
         return row;
     }
-    
+
+    public int getValue() {
+        return getCell().getValue();
+    }
+
 }

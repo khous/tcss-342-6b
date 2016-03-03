@@ -1,16 +1,18 @@
 package model;
 
+import javax.naming.OperationNotSupportedException;
+
 /**
  *
  */
 public class OperatorToken extends Token {
-    public static final char PLUS        = '+';
-    public static final char MINUS       = '-';
-    public static final char DIVIDE      = '/';
-    public static final char MULTIPLY    = '*';
-    public static final char LEFT_PAREN  = '(';
-    public static final char RIGHT_PAREN = ')';
-    public static final char CARET       = '^';
+    public static final char PLUS        = '+',
+                             MINUS       = '-',
+                             DIVIDE      = '/',
+                             MULTIPLY    = '*',
+                             LEFT_PAREN  = '(',
+                             RIGHT_PAREN = ')',
+                             CARET       = '^';
 
     private final char operator;
 
@@ -47,11 +49,13 @@ public class OperatorToken extends Token {
             case OperatorToken.DIVIDE:
                 return 1;
             case OperatorToken.LEFT_PAREN:
+                return 5;
+            case OperatorToken.CARET:
                 return 2;
 
             default:
                 // This case should NEVER happen
-                System.out.println("Error in operatorPriority.");
+                System.out.println("Error in operatorPriority for value " + Character.toString(ch));
                 System.exit(0);
                 return -1;
         }
@@ -68,10 +72,54 @@ public class OperatorToken extends Token {
                 (ch == MINUS) ||
                 (ch == MULTIPLY) ||
                 (ch == DIVIDE) ||
+                (ch == CARET) ||
                 (ch == LEFT_PAREN) );
     }
 
     public int priority () {
         return priority(operator);
     }
+
+    public int compute (int leftOperand, int rightOperand) throws OperationNotSupportedException {
+        int computedValue = 0;
+        //do the appropriate operation for this instance of operator token
+        switch (operator) {
+            case PLUS:
+                computedValue = leftOperand + rightOperand;
+                break;
+            case MINUS:
+                computedValue = leftOperand - rightOperand;
+                break;
+            case MULTIPLY:
+                computedValue = leftOperand * rightOperand;
+                break;
+            case DIVIDE:
+                computedValue = leftOperand / rightOperand;
+                break;
+            case CARET:
+                computedValue = (int) Math.pow(leftOperand, rightOperand);
+                break;
+            default:
+                throw new OperationNotSupportedException("Unexpected operator: " + operator);
+        }
+        return computedValue;
+    }
+
+    public int compute (int operand) throws OperationNotSupportedException {
+        int result = 0;
+        //do the appropriate unary operation for this instance of operator token
+        switch (operator) {
+            case MINUS:
+                result = -operand;
+                break;
+            case PLUS:
+                result = operand;
+                break;
+            default:
+                throw new OperationNotSupportedException("Unexpected unary operator: " + operator);
+        }
+
+        return result;
+    }
+
 }

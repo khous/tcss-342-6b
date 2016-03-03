@@ -1,10 +1,11 @@
 package lexer.expression;
 
-import model.CellToken;
-import model.LiteralToken;
-import model.OperatorToken;
-import model.Token;
+import model.*;
 
+import javax.naming.OperationNotSupportedException;
+import java.lang.reflect.Array;
+import java.util.ArrayDeque;
+import java.util.Iterator;
 import java.util.Stack;
 
 /**
@@ -38,18 +39,15 @@ public class ExpressionEngine {
      *
      * This algorithm follows the algorithm described in Weiss, pages 105-108.
      */
-    public static Stack getFormula(String formula) {
-        Stack returnStack = new Stack();  // stack of Tokens (representing a postfix expression)
+    public static ArrayDeque<Token> getFormula(String formula) {
+        ArrayDeque<Token> returnStack = new ArrayDeque<>();  // stack of Tokens (representing a postfix expression)
         boolean error = false;
         char ch = ' ';
 
-        int literalValue = 0;
-
-        int column = 0;
-        int row;
+        int literalValue;
 
         int index = 0;  // index into formula
-        Stack operatorStack = new Stack();  // stack of operators
+        Stack<OperatorToken> operatorStack = new Stack<>();  // stack of operators
 
         while (index < formula.length() ) {
             // get rid of leading whitespace characters
@@ -74,13 +72,14 @@ public class ExpressionEngine {
                     case OperatorToken.MINUS:
                     case OperatorToken.MULTIPLY:
                     case OperatorToken.DIVIDE:
+                    case OperatorToken.CARET:
                     case OperatorToken.LEFT_PAREN:
                         // push operatorTokens onto the output stack until
                         // we reach an operator on the operator stack that has
                         // lower priority than the current one.
                         OperatorToken stackOperator;
                         while (!operatorStack.isEmpty()) {
-                            stackOperator = (OperatorToken) operatorStack.peek();
+                            stackOperator = operatorStack.peek();
                             if ( (stackOperator.priority() >= OperatorToken.priority(ch)) &&
                                     (stackOperator.getOperatorToken() != OperatorToken.LEFT_PAREN) ) {
 
@@ -106,13 +105,13 @@ public class ExpressionEngine {
 
             } else if (ch == OperatorToken.RIGHT_PAREN) {
                 OperatorToken stackOperator;
-                stackOperator = (OperatorToken) operatorStack.pop();
+                stackOperator = operatorStack.pop();
                 // This code does not handle operatorStack underflow.
                 while (stackOperator.getOperatorToken() != OperatorToken.LEFT_PAREN) {
                     // pop operators off the stack until a LeftParen appears and
                     // place the operators on the output stack
                     returnStack.push(stackOperator);
-                    stackOperator = (OperatorToken) operatorStack.pop();
+                    stackOperator = operatorStack.pop();
                 }
 
                 index++;
@@ -156,7 +155,7 @@ public class ExpressionEngine {
 
         if (error) {
             // a parse error; return the empty stack
-            new Stack<Token>();
+            new ArrayDeque<Token>();
         }
 
         return returnStack;
@@ -276,5 +275,49 @@ public class ExpressionEngine {
         return ct.getRow() + ":" + ct.getColumn();
     }
     
+    public static int calculate (ArrayDeque<Token> postfixExpression) throws OperationNotSupportedException {
+        ArrayDeque<ValueToken> operands = new ArrayDeque<>();
+        int calculatedValue;
 
+        while (!postfixExpression.isEmpty()) {
+            Token currentToken = postfixExpression.removeLast();
+
+            if (currentToken instanceof OperatorToken) {
+                ValueToken rightOperand = operands.removeLast();
+
+                if (operands.isEmpty()) {
+                    //do a unary operation
+                    calculatedValue = ((OperatorToken) currentToken).compute(rightOperand.getValue());
+                } else {
+                    ValueToken leftOperand = operands.removeLast();
+                    calculatedValue = ((OperatorToken) currentToken)
+                            .compute(leftOperand.getValue(), rightOperand.getValue());
+                }
+
+                operands.addLast(new LiteralToken(calculatedValue));
+            } else {
+                operands.addLast((ValueToken) currentToken);
+            }
+        }
+
+        return operands.pop().getValue();
+    }
+
+    public static String postfixToString (ArrayDeque<Token> expression) {
+        String out = "";
+
+        Iterator i = expression.descendingIterator();
+        while (i.hasNext()) {
+            Token t = (Token)i.next();
+
+            if (t instanceof ValueToken)
+                out += ((ValueToken) t).getValue();
+            else
+                out += ((OperatorToken) t).getOperatorToken();
+
+            out += " ";
+        }
+
+        return out.trim();
+    }
 }
