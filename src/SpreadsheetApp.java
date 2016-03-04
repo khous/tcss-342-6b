@@ -106,7 +106,7 @@ public class SpreadsheetApp {
     
     public static void main(String[] args) {
         Spreadsheet theSpreadsheet = new Spreadsheet();
-        App game = new App(theSpreadsheet)
+        App game = new App(theSpreadsheet);
         boolean done = false;
         String command = "";
     

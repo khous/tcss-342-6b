@@ -8,7 +8,7 @@ import java.util.ArrayDeque;
 import java.util.UnknownFormatConversionException;
 
 public class Spreadsheet {
-    public static final int DEFAULT_DIMENSION = 3;
+    public static final int DEFAULT_DIMENSION = 26;
     private Cell[][] mySpreadSheet;
 
     public Spreadsheet () {

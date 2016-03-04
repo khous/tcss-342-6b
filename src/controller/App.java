@@ -17,6 +17,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
+import model.Cell;
+import model.CellToken;
 import model.Spreadsheet;
 
 /**
@@ -26,75 +28,23 @@ import model.Spreadsheet;
 
 public class App extends JPanel{
 	JTable table;
-	public App (Spreadsheet k){
-		TableModel spread = new TableModel() {
-			
-			@Override
-			public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void removeTableModelListener(TableModelListener l) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean isCellEditable(int rowIndex, int columnIndex) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public Object getValueAt(int rowIndex, int columnIndex) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-			
-			@Override
-			public int getRowCount() {
-				// TODO Auto-generated method stub
-				return 3;
-			}
-			
-			@Override
-			public String getColumnName(int columnIndex) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public int getColumnCount() {
-				// TODO Auto-generated method stub
-				return 3;
-			}
-			
-			@Override
-			public Class<?> getColumnClass(int columnIndex) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public void addTableModelListener(TableModelListener l) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
-		
-		
-
-		
-		table = new JTable(26,26); 
-		 JScrollPane scroll = new JScrollPane(table);
+	public App (final Spreadsheet sheet){
+		table = new JTable(26,26);
+		JScrollPane scroll = new JScrollPane(table);
 		JLabel table2 = new JLabel();
-		
-		 
-		 
-		 table.getModel().addTableModelListener(new TableModelListener() {
 
+		for(int i=0;i<26;i++){
+			System.out.println();
+			for(int kd=0;kd<26;kd++){
+				if(sheet.getCell(i, kd)==null){
+					table.setValueAt(0, i, kd);
+				}else{
+					table.setValueAt(((sheet.getCell(i, kd).getValue())), i,kd);
+				}
+			}
+		}
+
+		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				int row = e.getFirstRow();
@@ -103,25 +53,10 @@ public class App extends JPanel{
 				String columnName = model.getColumnName(column);
 				Object data = model.getValueAt(row, column);
 				System.out.println(data);
-				 //table.setValueAt(e.getSource(),0,0);
-				
+				sheet.changeCellFormulaAndRecalculate(new CellToken(row, column), data.toString());
 			}
-		    });
+		});
 
-			for(int i=0;i<26;i++){
-	    		
-	    		System.out.println();
-	    		for(int kd=0;kd<26;kd++){
-	    			if(k.getCell(i, kd)==null){
-	    				table.setValueAt(0, i, kd);
-	    			}else{
-	    				table.setValueAt(((k.getCell(i, kd).getValue())), i,kd);
-	    			}
-	    			
-	    		}
-	    	}
-		 
-		 
 		JFrame frame = new JFrame("342 SpreadSheet - Kevin, Kyle, Kyaw");
 		frame.add(scroll, BorderLayout.CENTER);
 		frame.add(table2,BorderLayout.WEST);
@@ -134,7 +69,9 @@ public class App extends JPanel{
 				repaint();
 	}
 	
-
+	public void changeFormulaApp (int row, int column, int value) {
+		table.setValueAt(value, row, column);
+	}
 	
 	 protected void paintComponent(final Graphics theGraphics) {
 	        super.paintComponent(theGraphics);
