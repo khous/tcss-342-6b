@@ -27,11 +27,5 @@ public class CellTest {
         c.setRow(1234);
         c.setColumn(2);
         Assert.assertEquals(c.getCellId(), "B1234");
-//        Assert.assertEquals(c.getCellId(), "A1");
-//        Assert.assertEquals(c.getCellId(), "A1");
-//        Assert.assertEquals(c.getCellId(), "A1");
-//        Assert.assertEquals(c.getCellId(), "A1");
-//        Assert.assertEquals(c.getCellId(), "A1");
-//        Assert.assertEquals(c.getCellId(), "A1");
     }
 }
