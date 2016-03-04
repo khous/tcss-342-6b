@@ -68,6 +68,8 @@ public class Cell {
     public void calculate (Spreadsheet sheet) throws OperationNotSupportedException {
         //
         //TODO some crazy shit
+        if (postFixExpression == null) return;
+
         this.value = ExpressionEngine.calculate(postFixExpression.clone(), sheet);
     }
 

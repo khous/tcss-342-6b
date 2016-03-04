@@ -28,6 +28,9 @@ import model.Spreadsheet;
 
 public class App extends JPanel{
 	JTable table;
+
+	private boolean changeInProgress = false;
+
 	public App (final Spreadsheet sheet){
 		table = new JTable(26,26);
 		JScrollPane scroll = new JScrollPane(table);
@@ -44,16 +47,24 @@ public class App extends JPanel{
 			}
 		}
 
+
 		table.getModel().addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
+				if (changeInProgress) return;
+
 				int row = e.getFirstRow();
 				int column = e.getColumn();
 				TableModel model = (TableModel)e.getSource();
 				String columnName = model.getColumnName(column);
 				Object data = model.getValueAt(row, column);
 				System.out.println(data);
+
 				sheet.changeCellFormulaAndRecalculate(new CellToken(row, column), data.toString());
+
+				changeInProgress = true;
+				model.setValueAt(sheet.getCell(row, column).getValue(), row, column);
+				changeInProgress = false;
 			}
 		});
 
@@ -84,6 +95,4 @@ public class App extends JPanel{
 		 table.setValueAt(2500, 1, 1);
 		 
 	 }
-	
-
 }
