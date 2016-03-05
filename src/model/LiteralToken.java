@@ -15,6 +15,8 @@ public class LiteralToken extends ValueToken {
         return value;
     }
 
+    public void setSheet (Spreadsheet sheet) {}
+
     public void setValue(int value) {
         this.value = value;
     }

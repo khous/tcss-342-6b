@@ -89,7 +89,7 @@ public class Cell {
     public void setFormula(String formula, Spreadsheet sheet) {
         this.formula = formula;
 
-        postFixExpression = ExpressionEngine.getFormula(formula);
+        postFixExpression = ExpressionEngine.getFormula(formula, sheet);
 
         parents.clear();
 
@@ -100,6 +100,10 @@ public class Cell {
 
                 if (!parents.contains(c))
                     parents.add(c);
+            } else if (t instanceof FunctionToken) {
+                FunctionToken ft = (FunctionToken) t;
+
+                parents.addAll(ft.getReferencedCells());
             }
         }
     }

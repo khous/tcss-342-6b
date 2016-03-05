@@ -5,4 +5,5 @@ package model;
  */
 public abstract class ValueToken extends Token {
     public abstract int getValue();
+    public abstract void setSheet (Spreadsheet sheet);
 }

@@ -1,11 +1,13 @@
 package lexer.expression;
 
+import function.Function;
 import model.*;
 
 import javax.naming.OperationNotSupportedException;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -35,7 +37,7 @@ public class ExpressionEngine {
      *
      * This algorithm follows the algorithm described in Weiss, pages 105-108.
      */
-    public static ArrayDeque<Token> getFormula(String formula) {
+    public static ArrayDeque<Token> getFormula(String formula, Spreadsheet sheet) {
         ArrayDeque<Token> returnStack = new ArrayDeque<>();  // stack of Tokens (representing a postfix expression)
         boolean error = false;
         char ch = ' ';
@@ -128,17 +130,23 @@ public class ExpressionEngine {
                 returnStack.push(new LiteralToken(literalValue));
 
             } else if (Character.isUpperCase(ch)) {
-                // We found a cell reference token
+                // We found a cell reference token, or a function
                 CellToken cellToken = getCellToken(formula, index);
                 if (cellToken.getRow() == CellToken.BAD_CELL) {
-                    error = true;
-                    break;
+                    FunctionToken ft = getFunctionToken(formula, index, sheet);
+                    if (ft.isBadFormula()) {
+                        error = true;
+                        break;
+                    } else {
+                        // place the cell reference on the output stack
+                        returnStack.push(ft);
+                        index += ft.toString().length();
+                    }
                 } else {
-                    // place the cell reference on the output stack
+                    cellToken.setSheet(sheet);
                     returnStack.push(cellToken);
                     index += cellToken.toString().length();
                 }
-
             } else {
                 error = true;
                 break;
@@ -157,6 +165,63 @@ public class ExpressionEngine {
 
         return returnStack;
     }
+
+    public static FunctionToken getFunctionToken (String inputString, int startIndex, Spreadsheet sheet) {
+        int index = startIndex;
+
+        ArrayDeque<ArrayDeque<Token>> arguments = new ArrayDeque<>();
+        FunctionToken funcToken = new FunctionToken();
+
+        // handle a bad startIndex
+        if ((startIndex < 0) || (startIndex >= inputString.length())) {
+            return funcToken;
+        }
+
+        //Iterate until end or paren
+        StringBuilder functionKey = new StringBuilder();
+        while (inBoundsOfString(inputString, startIndex) && inputString.charAt(index) != OperatorToken.LEFT_PAREN) {
+            functionKey.append(inputString.charAt(index));
+            index++;
+        }
+        //So now we have the function key, next we parse the arguments
+        funcToken.setFunctionKey(functionKey.toString());
+
+        //parse each comma separated argument, compile a list using get formula
+        //Go until we reach our right paren, how to handle inner parentheses? maybe use a zero sum tracker
+        int unclosedParentheses = 1;
+        index++;//Moving past opening parenthesis, TODO better error checking whitespace handling
+        StringBuilder argument = new StringBuilder();
+        int functionArgumentStartIndex = index;
+
+        while (inBoundsOfString(inputString, index) && unclosedParentheses != 0) {
+            char currentCharacter = inputString.charAt(index);
+
+            if (currentCharacter == ',' && unclosedParentheses == 1) {//Can't include inner function arguments
+                String argumentString = inputString.substring(functionArgumentStartIndex, index);
+                arguments.add(getFormula(argumentString, sheet));
+                argument.setLength(0);//Empty the builder for next argument
+                functionArgumentStartIndex = index + 1;
+            } else if (currentCharacter == OperatorToken.LEFT_PAREN) {
+                unclosedParentheses++;
+            } else if (currentCharacter == OperatorToken.RIGHT_PAREN) {
+                unclosedParentheses--;
+                //Throw the last argument in
+                if (unclosedParentheses == 0) {
+                    arguments.add(getFormula(inputString.substring(functionArgumentStartIndex, index), sheet));
+                }
+            }
+
+            index++;
+        }
+
+        funcToken.setSheet(sheet);
+        funcToken.setArguments(arguments);
+        funcToken.setFunctionString(inputString.substring(startIndex, index));
+
+        return funcToken;
+    }
+
+    public static boolean inBoundsOfString (String s, int index) { return index < s.length(); }
 
     /**
      * getCellToken
@@ -183,13 +248,13 @@ public class ExpressionEngine {
      */
     public static CellToken getCellToken (String inputString, int startIndex) {
         char ch;
-        int column = 0;
-        int row = 0;
-        int index = startIndex;
+        int column,
+            row,
+            index = startIndex;
         CellToken cellToken = new CellToken();
 
         // handle a bad startIndex
-        if ((startIndex < 0) || (startIndex >= inputString.length() )) {
+        if ((startIndex < 0) || (startIndex >= inputString.length())) {
             cellToken.setColumn(CellToken.BAD_CELL);
             cellToken.setRow(CellToken.BAD_CELL);
             return cellToken;
@@ -219,7 +284,7 @@ public class ExpressionEngine {
             cellToken.setRow(CellToken.BAD_CELL);
             return cellToken;
         } else {
-            column = ch - 'A';
+            column = (ch - 'A') + 1;//One base columns
             index++;
         }
 
@@ -282,14 +347,14 @@ public class ExpressionEngine {
 
             if (currentToken instanceof OperatorToken) {
                 ValueToken rightOperand = operands.removeLast();
-                assignSheetToCellToken(rightOperand, sheet);
+                assignSheetToValueToken(rightOperand, sheet);
 
                 if (operands.isEmpty()) {
                     //do a unary operation
                     calculatedValue = ((OperatorToken) currentToken).compute(rightOperand.getValue());
                 } else {
                     ValueToken leftOperand = operands.removeLast();
-                    assignSheetToCellToken(leftOperand, sheet);
+                    assignSheetToValueToken(leftOperand, sheet);
 
                     calculatedValue = ((OperatorToken) currentToken)
                             .compute(leftOperand.getValue(), rightOperand.getValue());
@@ -302,14 +367,13 @@ public class ExpressionEngine {
         }
 
         ValueToken finalValue = operands.pop();
-        assignSheetToCellToken(finalValue, sheet);
+        assignSheetToValueToken(finalValue, sheet);
 
         return finalValue.getValue();
     }
 
-    public static void assignSheetToCellToken (ValueToken t, Spreadsheet sheet) {
-        if (t instanceof CellToken)
-            ((CellToken) t).setSheet(sheet);
+    public static void assignSheetToValueToken (ValueToken t, Spreadsheet sheet) {
+        t.setSheet(sheet);
     }
 
     public static String postfixToString (ArrayDeque<Token> expression) {
@@ -320,7 +384,10 @@ public class ExpressionEngine {
             Token t = (Token)i.next();
 
             if (t instanceof ValueToken)
-                out += ((ValueToken) t).getValue();
+                if (t instanceof FunctionToken)
+                    out += ((FunctionToken) t).getFunctionString();
+                else
+                    out += ((ValueToken) t).getValue();
             else
                 out += ((OperatorToken) t).getOperatorToken();
 
@@ -331,6 +398,6 @@ public class ExpressionEngine {
     }
 
     public static int calculateFromFormula (String formula, Spreadsheet sheet) throws OperationNotSupportedException {
-        return calculate(getFormula(formula), sheet);
+        return calculate(getFormula(formula, sheet), sheet);
     }
 }

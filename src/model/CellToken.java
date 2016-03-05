@@ -60,4 +60,8 @@ public class CellToken extends ValueToken {
     public String toString () {
         return (new Cell("", row, column)).getCellId();
     }
+
+    public boolean isBadCell () {
+        return row == BAD_CELL || column == BAD_CELL;
+    }
 }
