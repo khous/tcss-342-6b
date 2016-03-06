@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Created by kyle on 2/23/16.
+ * A simple literal token which can only be a number.
  */
 public class LiteralToken extends ValueToken {
 

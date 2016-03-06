@@ -1,20 +1,16 @@
 package lexer.expression;
 
-import function.Function;
 import model.*;
 
 import javax.naming.OperationNotSupportedException;
-import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 
 /**
  * The purpose of this class is to assimilate user input into valid expressions and compute the values.
- * TODO This class should be able to assume that when it's computing, everything is dereferenced to values
- * TODO what should this class have? a list of expressions to compute? A tree? Should this actually be something a
- * cell has?
+ * All parsing and cell dereferencing is handled here. The API is kind of ugly but it's important that the spreadsheet first
+ * sets the cell being madified and then calls changeCellFormulaAndRecalculate
  */
 public class ExpressionEngine {
     /**
@@ -166,6 +162,14 @@ public class ExpressionEngine {
         return returnStack;
     }
 
+    /**
+     * Attempt to get a function token starting at the specified index of the input string. This function recursively
+     * generates a formula for each detected argument.
+     * @param inputString The string from which to parse a FunctionToken
+     * @param startIndex The index to start parsing at
+     * @param sheet The spreadsheet
+     * @return Return the FunctionToken that was found
+     */
     public static FunctionToken getFunctionToken (String inputString, int startIndex, Spreadsheet sheet) {
         int index = startIndex;
 
@@ -214,8 +218,11 @@ public class ExpressionEngine {
             index++;
         }
 
+        //Give this token reference to the sheet that it cares about
         funcToken.setSheet(sheet);
+        //Assign the arguments that were discovered
         funcToken.setArguments(arguments);
+        //Set the string as what the user entered
         funcToken.setFunctionString(inputString.substring(startIndex, index));
 
         return funcToken;
@@ -336,7 +343,15 @@ public class ExpressionEngine {
     public static String printCellToken (CellToken ct) {
         return ct.getRow() + ":" + ct.getColumn();
     }
-    
+
+    /**
+     * Perform the calculation on a post fix expression. IMPORTANT: The assumption here is that every cell that this
+     * expression * is dependent on has already been calculated.
+     * @param postfixExpression The list representing a post fix expression. The list is in reverse postfix order
+     * @param sheet The spreadsheet we care about
+     * @return The calculated integer value
+     * @throws OperationNotSupportedException If there's a bad character inserted, you'll get this exception
+     */
     public static int calculate (ArrayDeque<Token> postfixExpression, Spreadsheet sheet)
             throws OperationNotSupportedException {
         ArrayDeque<ValueToken> operands = new ArrayDeque<>();
@@ -353,6 +368,7 @@ public class ExpressionEngine {
                     //do a unary operation
                     calculatedValue = ((OperatorToken) currentToken).compute(rightOperand.getValue());
                 } else {
+                    //Do a normal binary operation
                     ValueToken leftOperand = operands.removeLast();
                     assignSheetToValueToken(leftOperand, sheet);
 
@@ -372,10 +388,20 @@ public class ExpressionEngine {
         return finalValue.getValue();
     }
 
-    public static void assignSheetToValueToken (ValueToken t, Spreadsheet sheet) {
+    /**
+     * Helper function that gives value tokens a reference to the spreadsheet.
+     * @param t the token
+     * @param sheet the spreadsheet
+     */
+    private static void assignSheetToValueToken (ValueToken t, Spreadsheet sheet) {
         t.setSheet(sheet);
     }
 
+    /**
+     * Print out a post fix stack. Useful for testing
+     * @param expression The expression to print
+     * @return The string in postfix order
+     */
     public static String postfixToString (ArrayDeque<Token> expression) {
         String out = "";
 
@@ -397,6 +423,13 @@ public class ExpressionEngine {
         return out.trim();
     }
 
+    /**
+     * Perform a calculation from the given formula in the given Spreadsheet
+     * @param formula The formula to calculate
+     * @param sheet The spreadsheet that the formula lives in
+     * @return The calculated value
+     * @throws OperationNotSupportedException
+     */
     public static int calculateFromFormula (String formula, Spreadsheet sheet) throws OperationNotSupportedException {
         return calculate(getFormula(formula, sheet), sheet);
     }

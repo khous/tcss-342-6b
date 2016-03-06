@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kyle on 3/5/16.
+ * An expression Token representing a function, the arguments of which are all ValueTokens which can be functions or
+ * cells or literals. Pretty cool stuff.
  */
 public class FunctionToken extends ValueToken {
     /**
@@ -55,9 +56,14 @@ public class FunctionToken extends ValueToken {
         return arguments;
     }
 
+    /**
+     * Set the arguments to this function and recursively discover all referenced cells so the dependency graph can still
+     * be calculated. Very important.
+     * @param arguments
+     */
     public void setArguments(ArrayDeque<ArrayDeque<Token>> arguments) {
         referencedCells = new ArrayList<>();
-
+        //Arrow ant-pattern
         for (ArrayDeque<Token> oneArgument : arguments)
             for (Token t : oneArgument)
                 if (t instanceof ValueToken)

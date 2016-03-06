@@ -3,7 +3,7 @@ package model;
 import javax.naming.OperationNotSupportedException;
 
 /**
- *
+ * An operator token. Known operators are +,-,/,*,^ and the parentheses
  */
 public class OperatorToken extends Token {
     public static final char PLUS        = '+',
@@ -106,7 +106,7 @@ public class OperatorToken extends Token {
     }
 
     public int compute (int operand) throws OperationNotSupportedException {
-        int result = 0;
+        int result;
         //do the appropriate unary operation for this instance of operator token
         switch (operator) {
             case MINUS:

@@ -7,6 +7,9 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This object contains all the data for a cell. The important part is setFormula, which recalculates the dependencies.
+ */
 public class Cell {
 
     /**
@@ -19,13 +22,10 @@ public class Cell {
      */
     private List<Cell> parents = new ArrayList<>();//[ A1 ]
 
-    private ArrayDeque<Token> postFixExpression;
-
-    //ExpressionTree
-    /*
-                 OpToken +
-    CellToken A1           LiteralToken 5
+    /**
+     * The postfix expression representing the formula of this cell
      */
+    private ArrayDeque<Token> postFixExpression;
 
     /**
      * The computed value last assigned to this cell
@@ -81,28 +81,36 @@ public class Cell {
         return value;
     }
 
+    /**
+     * Add a depdency to this cell. This is mainly useful for testing.
+     * @param parent
+     */
     public void addParent (Cell parent) {
         parents.add(parent);
     }
 
-    //TODO rebuild expression tree
-    public void setFormula(String formula, Spreadsheet sheet) {
+    /**
+     * Set the formula for this cell and recompile the postfix expression
+     * @param formula The new formula
+     * @param sheet The spreadsheet that this cell lives in.
+     */
+    public void setFormula (String formula, Spreadsheet sheet) {
         this.formula = formula;
 
         postFixExpression = ExpressionEngine.getFormula(formula, sheet);
 
         parents.clear();
 
+        //Get all the cell references and add them to parents
         for (Token t : postFixExpression) {
             if (t instanceof CellToken) {
                 //add dependency to parents
                 Cell c = sheet.getCell((CellToken) t);
-
                 if (!parents.contains(c))
                     parents.add(c);
             } else if (t instanceof FunctionToken) {
+                //Handle adding function tokens
                 FunctionToken ft = (FunctionToken) t;
-
                 parents.addAll(ft.getReferencedCells());
             }
         }
@@ -116,6 +124,10 @@ public class Cell {
         this.parents = parents;
     }
 
+    /**
+     * Generate the human readable cell id, ie A123, AB1, etc
+     * @return The cell id
+     */
     public String getCellId () {
         if (row < 0 || column < 0) return "";
 
@@ -137,10 +149,6 @@ public class Cell {
 
     public int getIndegree() {
         return parents.size();
-    }
-
-    public Cell clone () {
-        return null;//// TODO: 2/23/16
     }
 
     public boolean equals (Object o) {

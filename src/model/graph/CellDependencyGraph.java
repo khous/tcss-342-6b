@@ -5,28 +5,33 @@ import model.Cell;
 import java.util.*;
 
 /**
- * Created by kyle on 2/27/16.
+ * Graph of cells designed to compute the topological sorted order.
  */
 public class CellDependencyGraph {
     private HashMap<String, List<Vertex>> adjacencyList = new HashMap<>();
 
-    //Vertices in the graph with indirection of one, if this is empty after building the graph, there exists a cycle
+    /**
+     * Vertices in the graph with indirection of one, if this is empty after building the graph, there exists a cycle
+     */
     private Stack<Cell> rootNodes = new Stack<>();
 
-    private Stack<Cell> topologicallyOrderedCells;
-
-    //Traverse the graph
-
+    /**
+     * Get the adjacency list representing this dependency graph
+     * @return The adjacency list
+     */
     public HashMap<String, List<Vertex>> getAdjacencyList() {
         return adjacencyList;
     }
 
+    /**
+     * Build the graph given a cell to start at. This single point of entry allows us to only recalculate cells that
+     * are affected by a formula change. It's pretty sweet.
+     * @param root The root at which to begin building the graph
+     */
     public void buildGraph (Cell root) {
         List<Cell> parents = root.getParents();
         Vertex rootVertex = new Vertex(root, parents.size());
-
         String rootId = root.getCellId();
-
         List<Vertex> existingEntry = adjacencyList.get(rootId);
 
         if (existingEntry == null) {
@@ -44,11 +49,7 @@ public class CellDependencyGraph {
                 return;//cycle detected?
 
             adjacencies.add(rootVertex);
-
             adjacencyList.put(cellId, adjacencies);
-
-//            adjacencies.add(new Vertex(parent, parent.getIndegree()));
-
         }
 
         if (parents.isEmpty() && !rootNodes.contains(root)) {
@@ -78,8 +79,6 @@ public class CellDependencyGraph {
         //get the start node, add it to the output
         //decrement all its children
         //If they are @ indirection 0, add them to the roots
-        //do t
-
         while (!roots.isEmpty()) {
             Vertex node = roots.pop();
             output.offer(node.getCell());

@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Created by kyle on 2/23/16.
+ * Base class for all tokens
  */
 public class Token {
 

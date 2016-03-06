@@ -1,7 +1,7 @@
 package model;
 
 /**
- * Created by kyle on 3/2/16.
+ * Base class for tokens which can be evaluated to an integer. Basically, not operators.
  */
 public abstract class ValueToken extends Token {
     public abstract int getValue();

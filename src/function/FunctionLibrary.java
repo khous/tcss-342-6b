@@ -1,16 +1,22 @@
 package function;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by kyle on 3/5/16.
+ * This class is the library of functions in the spreadsheet. You can easily add more by putting them in the functions
+ * map. This class should probably be a singleton or something like that.
  */
 public class FunctionLibrary {
+    /**
+     * The map of functions available to the spreadsheet
+     */
     private HashMap<String, Function> functions = new HashMap<>();
 
+    /**
+     * Create the function library initializing all available functions
+     */
     public FunctionLibrary () {
         //Average function
         functions.put("AVG", new Function() {
@@ -47,13 +53,15 @@ public class FunctionLibrary {
                 if (arguments.size() == 1) {
                     result = (int) (Math.log(arguments.get(0)) / Math.log(2));
                 } else {//first argument is the base, second argument is the operand
-                    result = (int) (Math.log(arguments.get(1)) / Math.log(arguments.get(0)));//Change of base formula
+                    //Change of base formula
+                    result = (int) (Math.log(arguments.get(1)) / Math.log(arguments.get(0)));
                 }
 
                 return result;
             }
         });
 
+        //Square root function
         functions.put("SQRT", new Function() {
             @Override
             public int compute(List<Integer> arguments) {
@@ -92,6 +100,11 @@ public class FunctionLibrary {
         });
     }
 
+    /**
+     * Get the function by the function key such as AVG, MED etc
+     * @param key The function key name that will show up the spreadsheet
+     * @return The function matching the provided key
+     */
     public Function getFunction (String key) {
         return functions.get(key);
     }

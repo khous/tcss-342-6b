@@ -3,7 +3,7 @@ package function;
 import java.util.List;
 
 /**
- * Created by kyle on 3/5/16.
+ * Interface for a function, all it needs to do is compute the integer arguments
  */
 public interface Function {
     int compute (List<Integer> arguments);

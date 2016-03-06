@@ -1,9 +1,7 @@
 package model;
 
-import lexer.expression.ExpressionEngine;
-
 /**
- * Created by kyle on 2/23/16.
+ * An expression token representing just a cell.
  */
 public class CellToken extends ValueToken {
 

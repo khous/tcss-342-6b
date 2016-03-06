@@ -1,11 +1,4 @@
-/*
- * Driver program of a spreadsheet application.
- * Text-based user interface.
- *
- * @author Donald Chinn
- */
-
-import controller.App;
+import controller.UI;
 import lexer.expression.ExpressionEngine;
 import model.Cell;
 import model.CellToken;
@@ -16,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
+/**
+ * Driver program for the spreadsheet
+ */
 public class SpreadsheetApp {
     
     /**
@@ -106,7 +102,7 @@ public class SpreadsheetApp {
     
     public static void main(String[] args) {
         Spreadsheet theSpreadsheet = new Spreadsheet();
-        App game = new App(theSpreadsheet);
+        UI game = new UI(theSpreadsheet);
         boolean done = false;
         String command = "";
     
