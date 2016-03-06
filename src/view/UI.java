@@ -1,7 +1,6 @@
-package controller;
+package view;
 
 import model.CellToken;
-import model.SoundPlayer;
 import model.Spreadsheet;
 
 import javax.swing.*;
