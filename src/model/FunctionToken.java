@@ -4,6 +4,7 @@ import function.Function;
 import function.FunctionLibrary;
 import lexer.expression.ExpressionEngine;
 
+import javax.naming.OperationNotSupportedException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +89,8 @@ public class FunctionToken extends ValueToken {
         FunctionLibrary fl = new FunctionLibrary();
 
         Function f = fl.getFunction(functionKey);
+
+        if (f == null) return 0;
 
         List<Integer> intArguments = new ArrayList<>();
 

@@ -32,6 +32,19 @@ public class FunctionLibrary {
             }
         });
 
+        functions.put("SUM", new Function() {
+            @Override
+            public int compute(List<Integer> arguments) {
+                if (arguments == null) return 0;
+                int sum = 0;
+                for (Integer i : arguments) {
+                    sum += i.intValue();
+                }
+
+                return sum;
+            }
+        });
+
         //Median Function
         functions.put("MED", new Function() {
             @Override

@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import javax.swing.tree.ExpandVetoException;
 import java.awt.*;
 
 /**
@@ -67,9 +68,13 @@ public class UI extends JPanel {
                 Object data = model.getValueAt(row, column);
                 System.out.println(data);
 
-
                 changeInProgress = true;
-                sheet.changeCellFormulaAndRecalculate(new CellToken(row, column), data.toString());
+                try {
+                    sheet.changeCellFormulaAndRecalculate(new CellToken(row, column), data.toString());
+                } catch (Exception error) {
+                    error.printStackTrace();
+                    sheet.changeCellFormulaAndRecalculate(new CellToken(row, column), "");//Set to a known good value
+                }
                 Cell[][] ss = sheet.getMySpreadSheet();
                 for (Cell[] rowArray : ss)
                     for (Cell cell : rowArray) {
