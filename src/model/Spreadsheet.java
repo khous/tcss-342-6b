@@ -5,7 +5,6 @@ import model.graph.CellDependencyGraph;
 
 import javax.naming.OperationNotSupportedException;
 import java.util.ArrayDeque;
-import java.util.UnknownFormatConversionException;
 
 public class Spreadsheet {
     public static final int DEFAULT_DIMENSION = 26;
@@ -19,6 +18,7 @@ public class Spreadsheet {
         mySpreadSheet = new Cell[size][size];
     }
 
+    public Cell[][] getMySpreadSheet () { return mySpreadSheet; }
 
     public Cell getCell (int row, int column) {
         //TODO bound checking
@@ -87,15 +87,26 @@ public class Spreadsheet {
     }
 
     public void changeCellFormulaAndRecalculate(CellToken ct, String formula) {
-        Cell c = mySpreadSheet[ct.getRow()][ct.getColumn()];
-
-        if (c == null) return;
+        Cell c = getCell(ct.getRow(), ct.getColumn());
 
         c.setFormula(formula, this);//this needs to rediscover its parents
+//        recalculate(c);
 
+        /*
+         * Unfortunately I realized to late that I only resolved the upward looking dependency chain, changing values
+         * upstream in this chain still requires a full recompute of the spreadsheet
+         */
+        for (Cell[] row : mySpreadSheet)
+            for (Cell cell : row) {
+                if (cell != null)
+                    recalculate(cell);
+            }
+
+    }
+
+    private void recalculate (Cell c) {
         //discover graph
         CellDependencyGraph graph = new CellDependencyGraph();
-
         graph.buildGraph(c);
         ArrayDeque<Cell> sortedCells = graph.getTopologicalOrder();
 

@@ -291,14 +291,14 @@ public class ExpressionEngine {
             cellToken.setRow(CellToken.BAD_CELL);
             return cellToken;
         } else {
-            column = (ch - 'A') + 1;//One base columns
+            column = (ch - 'A');
             index++;
         }
 
         while (index < inputString.length() ) {
             ch = inputString.charAt(index);
             if (Character.isUpperCase(ch)) {
-                column = ((column + 1) * 26) + (ch - 'A');
+                column = ((column) * 26) + (ch - 'A');
                 index++;
             } else {
                 break;
@@ -382,7 +382,7 @@ public class ExpressionEngine {
             }
         }
 
-        ValueToken finalValue = operands.pop();
+        ValueToken finalValue = operands.isEmpty() ? new LiteralToken(0) : operands.pop();
         assignSheetToValueToken(finalValue, sheet);
 
         return finalValue.getValue();

@@ -93,7 +93,7 @@ public class FunctionToken extends ValueToken {
 
         for (ArrayDeque<Token> argList : arguments) {
             try {
-                intArguments.add(new Integer(ExpressionEngine.calculate(argList, sheet)));
+                intArguments.add(new Integer(ExpressionEngine.calculate(argList.clone(), sheet)));
             } catch (Exception e) {
                 System.err.println("Operation not supported");
             }

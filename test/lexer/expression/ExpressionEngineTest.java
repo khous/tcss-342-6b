@@ -49,13 +49,13 @@ public class ExpressionEngineTest {
 //        postfixStack = ExpressionEngine.getFormula("AVG(1+3, 3)", ss);
         Assert.assertEquals(2, ExpressionEngine.calculateFromFormula("AVG(1,2,3)", ss));
 
-        ss.setCell(0, 1, new Cell("13", 0, 1));
-        ss.setCell(1, 1, new Cell("A0", 1, 1));
-        ss.setCell(2, 1, new Cell("", 2, 1));
+        ss.setCell(0, 0, new Cell("13", 0, 0));
+        ss.setCell(1, 0, new Cell("A0", 1, 0));
+        ss.setCell(2, 0, new Cell("", 2, 0));
 
 
-        ss.changeCellFormulaAndRecalculate(new CellToken(1, 1), "A0");
-        ss.changeCellFormulaAndRecalculate(new CellToken(2, 1), "AVG(A0,0)");
+        ss.changeCellFormulaAndRecalculate(new CellToken(1, 0), "A0");
+        ss.changeCellFormulaAndRecalculate(new CellToken(2, 0), "AVG(A0,0)");
 
         Assert.assertEquals(13, ExpressionEngine.calculateFromFormula("A1", ss));
         Assert.assertEquals(6, ExpressionEngine.calculateFromFormula("A2", ss));
